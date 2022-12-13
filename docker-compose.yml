@@ -1,7 +1,7 @@
 version: '3.8'
 services:
     web:
-        build: ./client
+        build: ./CompilerClient
         depends_on:
             - api
         ports:
@@ -9,7 +9,7 @@ services:
         networks:
             - network-backend
     api:
-        build: ./server
+        build: ./CompilerService
         depends_on:
             - mongo
         ports:
