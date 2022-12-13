@@ -1,20 +1,35 @@
-web:
- build: .
- links:
-  - "database_default"
- ports:
-  - "8000:80"
- volumes:
-  - ".:/app:rw"
-  - "./data:/data:rw"
- command: python manage.py runserver 0.0.0.0:80
- env_file: .env-local
+version: '3.8'
+services:
+    web:
+        build: ./client
+        depends_on:
+            - api
+        ports:
+            - '3000:3000'
+        networks:
+            - network-backend
+    api:
+        build: ./server
+        depends_on:
+            - mongo
+        ports:
+            - '3240:3240'
+        networks:
+            - network-backend
 
-database_default:
- image: postgres:13.5-alpine
- environment:
-   POSTGRES_DB: "db"
-   POSTGRES_HOST_AUTH_METHOD: "trust"
-   SERVICE_MANAGER: "fsm-postgres"
- volumes:
-  - ".:/app:rw"
+    mongo:
+        image: mongo
+        restart: always
+        volumes:
+            - mongodb_data:/data/db
+        environment:
+            MONGODB_INITDB_ROOT_USERNAME: zimb240
+            MONGODB_INITDB_ROOT_PASSWORD: 0908218507zimb240
+        networks:
+            - network-backend
+
+networks:
+    network-backend:
+
+volumes:
+    mongodb_data:
